@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS blood_bank;
+drop database blood_bank; 
+CREATE DATABASE blood_bank;
  
 USE blood_bank;
  
@@ -210,3 +211,16 @@ SELECT phone, COUNT(*) AS total
 FROM donors
 GROUP BY phone
 HAVING COUNT(*) > 1;
+ALTER TABLE donors
+DROP COLUMN latitude,
+DROP COLUMN longitude;
+
+ALTER TABLE donors
+ADD COLUMN address VARCHAR(255) AFTER city;
+
+ALTER TABLE collection_requests
+DROP COLUMN donor_latitude,
+DROP COLUMN donor_longitude;
+
+DESCRIBE donors;
+DESCRIBE collection_requests;

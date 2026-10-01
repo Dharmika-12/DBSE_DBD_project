@@ -2,7 +2,6 @@ import { useState } from "react";
 
 function FindDonor() {
     const [bloodGroup, setBloodGroup] = useState("");
-    const [location, setLocation] = useState(null);
     const [locationText, setLocationText] = useState("");
     const [donors, setDonors] = useState([]);
     const [searched, setSearched] = useState(false);
@@ -13,27 +12,64 @@ function FindDonor() {
     // =====================================================
 
     const getCurrentLocation = () => {
-        if (!navigator.geolocation) {
-            alert("Location is not supported by your browser.");
-            return;
-        }
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
+    if (!navigator.geolocation) {
+        alert(
+            "Location is not supported by your browser."
+        );
+        return;
+    }
 
-                setLocation({ latitude: lat, longitude: lng });
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+
+            try {
+
+                const response = await fetch(
+                    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`
+                );
+
+                const data =
+                    await response.json();
+
+                const address =
+                    data.localityInfo
+                        ? [
+                              data.locality,
+                              data.city,
+                              data.principalSubdivision,
+                              data.countryName,
+                          ]
+                              .filter(Boolean)
+                              .join(", ")
+                        : data.locality ||
+                          data.city ||
+                          data.principalSubdivision ||
+                          data.countryName ||
+                          "";
 
                 setLocationText(
-                    `Location captured: ${lat.toFixed(5)}, ${lng.toFixed(5)}`
+                    address ||
+                        "Current address captured"
                 );
-            },
-            () => {
-                alert("Please allow location access to find nearby donors.");
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unable to get current address."
+                );
             }
-        );
-    };
+        },
+
+        () => {
+            alert(
+                "Please allow location access."
+            );
+        }
+    );
+};
 
     // =====================================================
     // SEARCH DONORS
@@ -61,10 +97,10 @@ function FindDonor() {
 
         try {
             const url =
-                `http://localhost:5000/api/donors` +
-                `?bloodGroup=${encodeURIComponent(bloodGroup)}` +
-                `&latitude=${location.latitude}` +
-                `&longitude=${location.longitude}`;
+    `http://localhost:5000/api/donors` +
+    `?bloodGroup=${encodeURIComponent(
+        bloodGroup
+    )}`;
 
             const response = await fetch(url);
             const data = await response.json();
@@ -201,20 +237,7 @@ function FindDonor() {
                                         )}
 
                                        
-                                        {donor.blood_bank_name && (
-                                            <p className="distance">
-                                                📍 Distance to their blood
-                                                bank:{" "}
-                                                {donor.bank_distance !==
-                                                    null &&
-                                                donor.bank_distance !==
-                                                    undefined
-                                                    ? `${Number(
-                                                          donor.bank_distance
-                                                      ).toFixed(1)} km`
-                                                    : "Distance unavailable"}
-                                            </p>
-                                        )}
+                                        
 
                                         {donor.latitude &&
                                             donor.longitude &&
