@@ -124,15 +124,7 @@ function FindDonor() {
             <div className="form-container">
                 <h1>Find a Blood Donor</h1>
 
-                <p className="form-subtitle">
-                    Find available donors and see their distance from your
-                    current location. Every matching donor is shown,
-                    regardless of how far away they are.
-                </p>
-
-                <div className="section-title">
-                    <h2>Search Details</h2>
-                </div>
+    
 
                 {/* BLOOD GROUP */}
                 <div className="form-group">
@@ -154,23 +146,6 @@ function FindDonor() {
                     </select>
                 </div>
 
-                {/* LOCATION */}
-                <div className="location-section">
-                    <h2>Your Location</h2>
-
-                    <button
-                        className="location-button"
-                        onClick={getCurrentLocation}
-                    >
-                        📍 Use My Current Location
-                    </button>
-
-                    {location && (
-                        <div className="location-success">
-                            ✓ {locationText}
-                        </div>
-                    )}
-                </div>
 
                 {/* SEARCH BUTTON */}
                 <button
@@ -197,9 +172,8 @@ function FindDonor() {
                     ) : (
                         <>
                             <p className="result-info">
-                                {donors.length} donor(s) found, sorted by
-                                distance (nearest first). All matching donors
-                                are shown, even those far from your location.
+                                {donors.length} donor(s) found, All matching donors
+                                are shown.
                             </p>
 
                             <div className="donor-results">
